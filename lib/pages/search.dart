@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Model/weatherModel.dart';
-import 'package:flutter_application_1/WeatherProviders/WeatherProvider.dart';
-import 'package:flutter_application_1/services/Weather_Services.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_application_1/Cubits/WeatherCubit/WeatherCubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 // ignore: must_be_immutable
 class searchpage extends StatelessWidget {
   String? cityName;
-  searchpage({
-    this.upDateUi,
-  });
-  VoidCallback? upDateUi;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,12 +19,17 @@ class searchpage extends StatelessWidget {
               "Enter The City ",
             ),
             TextFormField(
+              
+// London
+// Cairo
+// Makassar
+// Dubai
               onFieldSubmitted: (data) async {
                 String cityName = data;
-                Weatherservices ser = Weatherservices();
-                WeatherModel weather = await ser.getweather(cityName: cityName);
-                Provider.of<WeatherProvider>(context, listen: false)
-                    .weatherData = weather;
+                BlocProvider.of<WeatherCubit>(context)
+                    .getWeather(cityName: cityName);
+                BlocProvider.of<WeatherCubit>(context).cityName = cityName;
+               
                 Navigator.pop(context);
               },
               decoration: InputDecoration(

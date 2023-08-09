@@ -1,9 +1,11 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/Cubits/WeatherCubit/WeatherCubit.dart';
+import 'package:flutter_application_1/Model/weatherModel.dart';
+import 'package:flutter_application_1/Widget.dart';
 import 'package:flutter_application_1/pages/search.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../WeatherProviders/WeatherProvider.dart';
+import '../Cubits/WeatherCubit/WeatherState.dart';
 
 class Homepage extends StatefulWidget {
   Homepage({super.key});
@@ -13,104 +15,37 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  void upDateUi() {
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
-    final weatherData = Provider.of<WeatherProvider>(context).weatherData;
     return Scaffold(
-      appBar: AppBar(
-        elevation: .7,
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return searchpage(upDateUi: upDateUi);
-              }));
-            },
-            icon: Icon(Icons.search_rounded),
-          ),
-        ],
-      ),
-      body: weatherData == null
-          ? Container(
-              color: Colors.white,
-              height: MediaQuery.sizeOf(context).height,
-              width: MediaQuery.sizeOf(context).width,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Text(
-                    "Empty.",
-                    style: TextStyle(
-                      fontSize: 28,
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : Container(
-              color:
-                  Provider.of<WeatherProvider>(context).weatherData?.getColor(),
-              height: MediaQuery.sizeOf(context).height,
-              width: MediaQuery.sizeOf(context).width,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text(
-                    "Name Of City: ${weatherData.name}",
-                    style: TextStyle(
-                      fontSize: 28,
-                    ),
-                  ),
-                  Text(
-                    "Name Of Country: ${weatherData.country}",
-                    style: TextStyle(
-                      fontSize: 28,
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Text(
-                        "state: ${weatherData.state}",
-                        style: TextStyle(
-                          fontSize: 25,
-                        ),
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            "temp_f: ${weatherData.temp_f}",
-                            style: TextStyle(
-                              fontSize: 25,
-                            ),
-                          ),
-                          Text(
-                            "temp_c: ${weatherData.temp_c}",
-                            style: TextStyle(
-                              fontSize: 25,
-                            ),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                  Text(
-                    "id:${weatherData.tz_id}",
-                    style: TextStyle(
-                      fontSize: 35,
-                    ),
-                  ),
-                ],
-              ),
+        appBar: AppBar(
+          elevation: .7,
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return searchpage();
+                }));
+              },
+              icon: Icon(Icons.search_rounded),
             ),
-    );
+          ],
+        ),
+        body: BlocBuilder<WeatherCubit, WeatherState>(
+          builder: (context, state) {
+            if (state is WeatherWeatingState) {
+              return Center(child: CircularProgressIndicator());
+            } else if (state is WeatherSuccessState) {
+
+              return HasData(weatherData: state.weatherModel );
+            } else if (state is WeatherFailerState) {
+              return Container(
+                child: Text("there was an E"),
+              );
+            } else {
+              return EmptyData();
+            }
+          },
+        ));
   }
 }
-// London
-// Cairo
-// Makassar
-// Dubai

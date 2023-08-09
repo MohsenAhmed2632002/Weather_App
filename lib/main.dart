@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/WeatherProviders/WeatherProvider.dart';
+import 'package:flutter_application_1/Cubits/WeatherCubit/WeatherCubit.dart';
 import 'package:flutter_application_1/pages/MainPage.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_application_1/services/Weather_Services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (BuildContext context) {
-        return WeatherProvider();
-      },
+    BlocProvider(
+      create: (context) => WeatherCubit(
+        Weatherservices(),
+      ),
       child: Weather(),
     ),
   );
@@ -28,7 +29,7 @@ class _WeatherState extends State<Weather> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch:
-            Provider.of<WeatherProvider>(context).weatherData?.getColor(),
+            BlocProvider.of<WeatherCubit>(context).weatherModel?.getColor(),
       ),
       home: Homepage(),
     );
